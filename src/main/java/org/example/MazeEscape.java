@@ -1,3 +1,5 @@
+package org.example;
+
 import java.util.Scanner;
 
 // Eccezione personalizzata per movimenti fuori dai limiti
@@ -41,9 +43,16 @@ public class MazeEscape {
 
             try {
                 // Chiamare il metodo per muovere il giocatore
+            	movePlayer(move);
                 // Verificare se ha raggiunto l'uscita e terminare il gioco
+            	if(playerX == LABIRINTO.length-1 && playerY == LABIRINTO[0].length-1)
+            	{
+            		escaped = true;
+            		System.out.println("Sei uscito dal labirinto.");
+            	}
             } catch (OutOfBoundsException | WallCollisionException e) {
                 // Stampare il messaggio di errore dell'eccezione
+            	System.out.println(e.getMessage());
             }
         }
 
@@ -59,20 +68,48 @@ public class MazeEscape {
      */
     private static void movePlayer(char direction) throws OutOfBoundsException, WallCollisionException {
         // Dichiarare nuove variabili per la posizione dopo il movimento
+    	int newX = playerX;
+    	int newY = playerY;
         
         // Switch-case per aggiornare le nuove coordinate in base alla direzione
-        
+    	switch(direction) {
+    		case 'D':
+    			newY++;
+    			break;
+    		case'A':
+    			newY--;
+    			break;
+    		case 'W':
+    			newX--;
+    			break;
+    		case 'S':
+    			newX++;
+    	}
         // Controllare se il movimento è fuori dalla matrice e lanciare OutOfBoundsException
         
         // Controllare se il movimento porta su un muro e lanciare WallCollisionException
         
         // Aggiornare la matrice con la nuova posizione del giocatore
+    	if(newX < 0 || newX > 4 || newY < 0 || newY > 4)
+    		throw new OutOfBoundsException("Non puoi uscire dal labirinto");
+    	if(LABIRINTO[newX][newY] == '#')
+    		throw new WallCollisionException("Non puoi colpire un muro");
+    	
+    	LABIRINTO[playerX][playerY] = '.';
+    	LABIRINTO[newX][newY] = 'P';
+    	playerX = newX;
+    	playerY = newY;
     }
 
     /**
      * Metodo per stampare il labirinto attuale
      */
     private static void printMaze() {
-        // Stampare la matrice riga per riga
+        for(int i = 0; i < LABIRINTO.length; i++) {
+        	for(int j = 0; j < LABIRINTO[0].length; j++) {
+        		System.out.print(LABIRINTO[i][j]);
+        	}
+            System.out.println();
+        }
     }
 }
